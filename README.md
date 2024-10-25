@@ -17,8 +17,13 @@
 
 ### Results On Ascend 910B
 
+![Ascend 910B上的加速效果，batch size = 1](https://github.com/deathwings602/Unified-IR/blob/main/doc/pic/end-to-end-time-b1.png)
 
+(batch size = 1)
 
+![Ascend 910B上的加速效果，batch size = 4](https://github.com/deathwings602/Unified-IR/blob/main/doc/pic/end-to-end-time.png)
+
+(batch size = 4)
 ## Getting Started
 
 在这里查看有关 **Unified IR** 的定义：[Introduction To Unified IR](https://github.com/deathwings602/Unified-IR/blob/main/doc/1-unified-ir-defs.md)
