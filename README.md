@@ -15,5 +15,13 @@
 
 目前，**Unified IR** 已经支持了NVIDIA、寒武纪和华为昇腾平台，我们通过深度学习编译器 **IntelliGen** 对张量程序的中间表示进行统一的优化，然后为不同的硬件平台实现了从 **Unified IR** 到对应平台代码生成后端，在包括Llama、GPT2的主流大模型中都取得了明显的加速。这样的结果表明，**Unified IR** 不仅可以为上层的人工智能应用提供恰当的抽象，从而能挖掘出更多的优化机会，还可以充分描述底层不同硬件平台的特性，能获得跨平台的优异性能。
 
+### Results On Ascend 910B
+
+
+
 ## Getting Started
 
+在这里查看有关 **Unified IR** 的定义：[Introduction To Unified IR](https://github.com/deathwings602/Unified-IR/blob/main/doc/1-unified-ir-defs.md)
+
+相关论文：[PowerFusion: A Tensor Compiler with Explicit Data Movement Description and Instruction-level Graph IR
+](https://arxiv.org/abs/2307.04995)

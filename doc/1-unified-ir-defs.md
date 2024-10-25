@@ -36,7 +36,20 @@ for parallel_id in 0...numParallel: # Parallel
 
 ### iSlice
 
-**iSlice** 用于表示每个并行处理单元在一次循环中所需要处理的数据切片。
+**iSlice** 用于表示每个并行处理单元在一次循环中所需要处理的数据切片。它表示为一个对底层的 **iPointer** 的wrapper，**iPointer** 表示在某个层级上的一块连续的内存，记录了内存层级、数据类型、首地址和内存大小等信息。其中，`dram` 上的iPointer在全局唯一，`sram` 上的iPointer在每个并行组内唯一，而 `reg` 上的iPointer则为每个最小并行单元独占。**iSlice** 则在 **iPointer** 的基础上表示其所指向的内存的一个二维的切片，由一组连续的内存片段组成，具有属性 `Shape`、`Stride` 和 `Offset`。`Shape` 是一个二元组，表示该内存切片的形状，`Stride` 也是一个二元组，表示在不同维度上的步长，`Offset` 则是一个关于 `parallel_id` 和 `loop_id` 的仿射函数，用于表示每一个最小并行单元在每个循环中所处理的内存切片的的首地址相对于其所基于的iPointer的偏移，用于表示输入输出数据和中间变量在不同并行单元和循环上的划分。
+
+```
+iPointer ::= iPointer(ID, Hierarchy, DType, Size)
+ID ::= Int
+Hierarchy ::= reg | sram | dram
+DType ::= fp64 | fp32 | fp16 ...
+Size ::= Int
+
+iSlice ::= iSlice(iPointer, Offset, Shape, Stride)
+Offset ::= Affine Function of (parallel_id, loop_id)
+Shape ::= (Int, Int)
+Stride ::= (Int, Int)
+```
 
 ### iOp
 
@@ -68,6 +81,7 @@ sync.scope t1, s1
 s.t. Pointer(t1) = Pointer(s1)
 
 // examples
+sync.sram t1, s1
 ```
 
 #### 计算iOp
@@ -133,7 +147,7 @@ reduce.add.row.group.fp32 t1, s1, [buffer=b1, groupSize=4] // Shape(s1) = (4, 12
 reduce.add.col.group.fp32 t1, s1, [buffer=b1, groupSize=4] // Shape(s1) = (4, 128), Shape(t1) = (1, 128), numUnit = 8
 ```
 
-除了以上这些iOp之外，还有一类不表示具体计算但是对Unified IR的表达性十分重要的iOp，称为 `identity`。顾名思义，它表示输入输出的两组iSlice在物理内存上是同一块，可以用于在iGraph中表达Reshape、Split、Concat等逻辑。
+除了以上这些iOp之外，还有一类不表示具体计算但是对Unified IR的表达性十分重要的iOp，称为 `identity`。顾名思义，它表示输入输出的两组iSlice在物理内存上是同一块，可以用于在iGraph中表达Reshape、Split、Concat等逻辑。`identity` 指令要求输入输出的 `iSlice` 表示同一块的物理内存。
 
 ```c
 identity [ts], [ss]
